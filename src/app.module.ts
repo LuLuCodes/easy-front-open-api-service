@@ -151,6 +151,9 @@ import { GoodsModule } from './modules/goods/goods.module';
         },
       }),
     }),
+    BullModule.registerQueue({
+      name: 'open-api-log',
+    }),
     DBModule,
     InitModule,
     GoodsModule,
