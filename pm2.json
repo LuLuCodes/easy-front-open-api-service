@@ -1,0 +1,12 @@
+{
+  "name": "easy-front-open-api-service",
+  "script": "api/main.js",
+  "ignoreWatch": ["node_modules"],
+  "instances": "2",
+  "watch": false,
+  "merge_logs": true,
+  "instance_var": "INSTANCE_ID",
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
