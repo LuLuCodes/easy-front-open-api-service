@@ -35,7 +35,8 @@ export class LoggerMiddleware implements NestMiddleware {
         requestParmas: ${JSON.stringify(req.params)},
         requestQuery: ${JSON.stringify(req.query)},
         requestBody: ${JSON.stringify(req.body)},
-        responseData: ${data},
+        statusCode: ${res.statusCode},
+        responseData: ${JSON.stringify(data)},
         referer: ${req.headers.referer || ''},
         ua: ${
           req.headers['user-agent']
