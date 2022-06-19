@@ -4,6 +4,7 @@ import { registerAs } from '@nestjs/config';
 export default registerAs('redis', () => ({
   host: env('REDIS_HOST', '127.0.0.1'),
   port: envNumber('REDIS_PORT', 6379),
+  password: env('REDIS_PASSWORD', ''),
   cookie_db_index: envNumber('COOKIE_REDIS_DB_INDEX', 0),
   cache_db_index: envNumber('CACHE_REDIS_DB_INDEX', 1),
   queue_db_index: envNumber('QUEUE_REDIS_DB_INDEX', 2),

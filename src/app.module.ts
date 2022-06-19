@@ -48,6 +48,7 @@ import { GoodsModule } from './modules/goods/goods.module';
           config: {
             host: configService.get('redis.host'),
             port: configService.get('redis.port'),
+            password: configService.get('redis.password'),
             db: configService.get('redis.cache_db_index'),
           },
         };
@@ -147,6 +148,7 @@ import { GoodsModule } from './modules/goods/goods.module';
         redis: {
           host: configService.get('redis.host'),
           port: configService.get('redis.port'),
+          password: configService.get('redis.password'),
           db: configService.get('redis.queue_db_index'),
         },
       }),
