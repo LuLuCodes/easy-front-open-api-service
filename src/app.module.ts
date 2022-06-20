@@ -60,11 +60,11 @@ import { GoodsModule } from './modules/goods/goods.module';
       useFactory: async (configService: ConfigService) => {
         return {
           dialect: 'mysql',
-          host: configService.get('database.host'),
-          port: configService.get('database.port'),
-          username: configService.get('database.username'),
-          password: configService.get('database.password'),
-          database: configService.get('database.database'),
+          host: configService.get('mysql.host'),
+          port: configService.get('mysql.port'),
+          username: configService.get('mysql.username'),
+          password: configService.get('mysql.password'),
+          database: configService.get('mysql.database'),
           timezone: '+08:00',
           pool: {
             max: 20,
@@ -98,6 +98,8 @@ import { GoodsModule } from './modules/goods/goods.module';
                 ) {
                   attributes.dataValues.update_time = now;
                 }
+                // 注入app_id
+                // attributes.dataValues.app_id = configService.get('app.app_id');
               },
               beforeBulkCreate(instances: any, options: any) {
                 const { fields } = options;
@@ -115,6 +117,8 @@ import { GoodsModule } from './modules/goods/goods.module';
                   ) {
                     instance.dataValues.update_time = now;
                   }
+                  // 注入app_id
+                  // instance.dataValues.app_id = configService.get('app.app_id');
                 }
               },
               beforeUpdate(instance: any, options: any) {
@@ -136,7 +140,16 @@ import { GoodsModule } from './modules/goods/goods.module';
           },
           dialectOptions: {
             decimalNumbers: true,
+            maxPreparedStatements: 100,
             multipleStatements: true,
+            dateStrings: true,
+            typeCast: function (field, next) {
+              // for reading from database
+              if (field.type === 'DATETIME') {
+                return field.string();
+              }
+              return next();
+            },
           },
         };
       },
