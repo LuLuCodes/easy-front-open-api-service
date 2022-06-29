@@ -17,7 +17,7 @@ import { CronTaskService } from '@service/cron-task.service';
 import { HttpService } from '@service/http.service';
 
 import app_config from '@config/app';
-import databse_config from '@config/databse';
+import mysql_config from '@config/mysql';
 import redis_config from '@config/redis';
 import session_config from '@config/session';
 
@@ -28,7 +28,7 @@ import { GoodsModule } from './modules/goods/goods.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [app_config, databse_config, redis_config, session_config],
+      load: [app_config, mysql_config, redis_config, session_config],
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'www'),

@@ -20,9 +20,9 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { PagedQueryDTO, BaseDTO } from '@dto/BaseDTO';
+import { QueryDTO, BaseDTO } from '@dto/BaseDTO';
 
-export class GetGoodsDTO extends PagedQueryDTO {
+export class GetGoodsDTO extends QueryDTO {
   @ApiPropertyOptional({
     description: '商品编码',
     type: [Number],
