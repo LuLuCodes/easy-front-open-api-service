@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "bootstrap": "pnpm install",
     "prebuild": "rimraf api",
     "build": "rimraf api && nest build && shx cp ./src/.env.production ./api/.env",
     "build:prod": "rimraf api && nest build && shx cp ./src/.env.production ./api/.env",
