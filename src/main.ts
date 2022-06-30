@@ -38,9 +38,17 @@ async function bootstrap() {
       max: 3000, // limit each IP to 100 requests per windowMs
       keyGenerator: function (req) {
         const app_key =
-          req.params.app_key || req.query.app_key || req.body.app_key;
+          req.params ||
+          req.params.app_key ||
+          req.query ||
+          req.query.app_key ||
+          req.body ||
+          req.body.app_key;
         const key = app_key + '_' + req.originalUrl;
-        return key;
+        const address =
+          req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const address_key = address + '_' + req.originalUrl;
+        return key || address_key;
       },
     }),
   );
