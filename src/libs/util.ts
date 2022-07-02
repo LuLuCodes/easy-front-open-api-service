@@ -142,3 +142,20 @@ export function await2<T, U = Error>(
       return [err, undefined]; // 执行失败，返回数组第一项为错误信息，第二项为 undefined
     });
 }
+
+export const wait = (ms: number) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
+
+export const isJsonStr = (str: string) => {
+  try {
+    if (typeof JSON.parse(str) === 'object') {
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+  return false;
+};
