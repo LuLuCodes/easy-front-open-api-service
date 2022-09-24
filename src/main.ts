@@ -1,24 +1,26 @@
 import { NestFactory } from '@nestjs/core';
-import { VersioningType } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-// import { LoggerFunMiddleware } from '@middleware/logger.middleware';
-// import { TransformInterceptor } from '@interceptor/transform.interceptor';
+import { TransformInterceptor } from '@interceptor/transform.interceptor';
 import { HttpExceptionFilter } from '@filter/http-exception.filter';
 import { AllExceptionsFilter } from '@filter/any-exception.filter';
 import { ValidationExceptionFilter } from '@filter/validation-exception-filter';
 import { RedisLock } from '@libs/redlock';
-import * as rateLimit from 'express-rate-limit';
+import rateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
+import * as bodyParserXml from 'body-parser-xml';
 import * as compression from 'compression';
 import * as ConnectRedis from 'connect-redis';
 import * as session from 'express-session';
 import { createClient } from 'redis';
+import * as multer from 'multer';
+
+bodyParserXml(bodyParser);
 
 const RedisStore = ConnectRedis(session);
 async function bootstrap() {
@@ -52,7 +54,23 @@ async function bootstrap() {
       },
     }),
   );
-  app.use(helmet());
+  if (config.get('app.node_env') === 'production') {
+    app.use(helmet.contentSecurityPolicy());
+    app.use(helmet.crossOriginEmbedderPolicy());
+    app.use(helmet.crossOriginOpenerPolicy());
+    app.use(helmet.crossOriginResourcePolicy());
+    app.use(helmet.dnsPrefetchControl());
+    app.use(helmet.expectCt());
+    app.use(helmet.frameguard());
+    app.use(helmet.hidePoweredBy());
+    app.use(helmet.hsts());
+    app.use(helmet.ieNoOpen());
+    app.use(helmet.noSniff());
+    app.use(helmet.originAgentCluster());
+    app.use(helmet.permittedCrossDomainPolicies());
+    app.use(helmet.referrerPolicy());
+    app.use(helmet.xssFilter());
+  }
   app.enableCors({
     origin: true,
     allowedHeaders:
@@ -61,6 +79,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.use(compression());
+  app.use(multer().any());
   app.use(bodyParser.json({ limit: '50mb' })); // For parsing application/json
   app.use(
     bodyParser.urlencoded({
@@ -68,18 +87,30 @@ async function bootstrap() {
       extended: false,
     }),
   ); // For parsing application/x-www-form-urlencoded
+  app.use(
+    bodyParser.xml({
+      xmlParseOptions: {
+        explicitArray: false, // 始终返回数组。默认情况下只有数组元素数量大于 1 是才返回数组。
+      },
+    }),
+  );
   // 使用拦截器打印出参
-  // app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(new TransformInterceptor());
   app.use(cookieParser());
+  const sessionRedis = createClient({
+    socket: {
+      host: config.get('redis.host'),
+      port: config.get('redis.port'),
+    },
+    password: config.get('redis.password'),
+    database: config.get('redis.cookie_db_index'),
+    legacyMode: true,
+  });
+  await sessionRedis.connect();
   app.use(
     session({
       store: new RedisStore({
-        client: createClient({
-          host: config.get('redis.host'),
-          port: config.get('redis.port'),
-          password: config.get('redis.password'),
-          db: config.get('redis.cookie_db_index'),
-        }),
+        client: sessionRedis,
       }),
       secret: config.get('session.secret'),
       key: config.get('session.key'),
@@ -97,8 +128,6 @@ async function bootstrap() {
     password: config.get('redis.password'),
     database: config.get('cache.redis_db'),
   });
-  // 监听所有的请求路由，并打印日志
-  // app.use(LoggerFunMiddleware);
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalFilters(new ValidationExceptionFilter());

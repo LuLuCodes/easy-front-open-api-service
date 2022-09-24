@@ -80,14 +80,14 @@ export function OkResponse(data?: any, msg = 'OK') {
 export function ErrorResponse(code: ResponseCode, msg: string | Error) {
   if (typeof msg === 'string') {
     return {
-      code: code,
+      code,
       data: null,
       msg,
     };
   }
 
   return {
-    code: code,
+    code,
     data: null,
     msg: msg.message || JSON.stringify(msg),
   };

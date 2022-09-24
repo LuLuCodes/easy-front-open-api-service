@@ -1,8 +1,8 @@
 /*
  * @Author: qian.qing@aliyun.com
  * @Date: 2020-08-12 15:33:20
- * @LastEditors: qian.qing@aliyun.com
- * @LastEditTime: 2020-08-12 15:33:20
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2022-09-24 15:08:12
  * @Description: Log4js 工具函数 & 实例化
  */
 

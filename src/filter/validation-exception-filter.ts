@@ -1,3 +1,13 @@
+/*
+ * @Author: leyi leyi@myun.info
+ * @Date: 2022-06-18 12:19:15
+ * @LastEditors: leyi leyi@myun.info
+ * @LastEditTime: 2022-09-24 15:12:35
+ * @FilePath: /easy-front-open-api-service/src/filter/validation-exception-filter.ts
+ * @Description:
+ *
+ * Copyright (c) 2022 by leyi leyi@myun.info, All Rights Reserved.
+ */
 import {
   ExceptionFilter,
   Catch,
